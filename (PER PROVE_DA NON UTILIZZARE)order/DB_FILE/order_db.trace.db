@@ -1,0 +1,304 @@
+2020-10-05 16:52:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        ID_CLIENTE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        id_cliente integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 16:52:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINE 
+       ADD CONSTRAINT FKSUYN3J09BGFJS2B1TXY5XEF1A 
+       FOREIGN KEY (ID_LINEA_ORDINE) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_line 
+       add constraint FKsuyn3j09bgfjs2b1txy5xef1a 
+       foreign key (id_linea_ordine) 
+       references order [42001-200]
+2020-10-05 16:56:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    DROP TABLE IF EXISTS ORDER[*] CASCADE "; expected "identifier"; SQL statement:
+
+    drop table if exists order CASCADE  [42001-200]
+2020-10-05 16:56:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        ID_CLIENTE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        id_cliente integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 16:56:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINE 
+       ADD CONSTRAINT FK4IC22Y3OBTJTA3X3U8N1MP4IM 
+       FOREIGN KEY (LINEA_ORDINE_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_line 
+       add constraint FK4ic22y3obtjta3x3u8n1mp4im 
+       foreign key (linea_ordine_id) 
+       references order [42001-200]
+2020-10-05 17:00:16 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    DROP TABLE IF EXISTS ORDER[*] CASCADE "; expected "identifier"; SQL statement:
+
+    drop table if exists order CASCADE  [42001-200]
+2020-10-05 17:00:16 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        ID_CLIENTE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        id_cliente integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 17:00:16 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINEA_ORDINE 
+       ADD CONSTRAINT FK8GMM1PECQ0P197W8DH6DQ8G9 
+       FOREIGN KEY (ORDER_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_linea_ordine 
+       add constraint FK8gmm1pecq0p197w8dh6dq8g9 
+       foreign key (order_id) 
+       references order [42001-200]
+2020-10-05 17:06:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    DROP TABLE IF EXISTS ORDER[*] CASCADE "; expected "identifier"; SQL statement:
+
+    drop table if exists order CASCADE  [42001-200]
+2020-10-05 17:06:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        ID_CLIENTE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        id_cliente integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 17:06:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINE 
+       ADD CONSTRAINT FKSAG994HW7THNJ0XEFJ4GL1WOD 
+       FOREIGN KEY (ORDER_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_line 
+       add constraint FKsag994hw7thnj0xefj4gl1wod 
+       foreign key (order_id) 
+       references order [42001-200]
+2020-10-05 17:06:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINE 
+       ADD CONSTRAINT FK4IC22Y3OBTJTA3X3U8N1MP4IM 
+       FOREIGN KEY (LINEA_ORDINE_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_line 
+       add constraint FK4ic22y3obtjta3x3u8n1mp4im 
+       foreign key (linea_ordine_id) 
+       references order [42001-200]
+2020-10-05 17:07:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    DROP TABLE IF EXISTS ORDER[*] CASCADE "; expected "identifier"; SQL statement:
+
+    drop table if exists order CASCADE  [42001-200]
+2020-10-05 17:07:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        ID_CLIENTE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        id_cliente integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 17:07:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINEA_ORDINE 
+       ADD CONSTRAINT FK8GMM1PECQ0P197W8DH6DQ8G9 
+       FOREIGN KEY (ORDER_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_linea_ordine 
+       add constraint FK8gmm1pecq0p197w8dh6dq8g9 
+       foreign key (order_id) 
+       references order [42001-200]
+2020-10-05 17:10:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    DROP TABLE IF EXISTS ORDER[*] CASCADE "; expected "identifier"; SQL statement:
+
+    drop table if exists order CASCADE  [42001-200]
+2020-10-05 17:10:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        ID_CLIENTE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        id_cliente integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 17:10:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINE 
+       ADD CONSTRAINT FKSAG994HW7THNJ0XEFJ4GL1WOD 
+       FOREIGN KEY (ORDER_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_line 
+       add constraint FKsag994hw7thnj0xefj4gl1wod 
+       foreign key (order_id) 
+       references order [42001-200]
+2020-10-05 17:15:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    DROP TABLE IF EXISTS ORDER[*] CASCADE "; expected "identifier"; SQL statement:
+
+    drop table if exists order CASCADE  [42001-200]
+2020-10-05 17:15:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        CLIETE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        cliete integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 17:15:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINE 
+       ADD CONSTRAINT FKSAG994HW7THNJ0XEFJ4GL1WOD 
+       FOREIGN KEY (ORDER_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_line 
+       add constraint FKsag994hw7thnj0xefj4gl1wod 
+       foreign key (order_id) 
+       references order [42001-200]
+2020-10-05 17:18:12 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP TABLE IF EXISTS ORDER[*] CASCADE"; expected "identifier"; SQL statement:
+drop table if exists order CASCADE [42001-200]
+2020-10-05 17:18:24 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP TABLE ORDER[*] CASCADE"; expected "identifier"; SQL statement:
+drop table order CASCADE [42001-200]
+2020-10-05 17:18:27 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP TABLE ORDER[*]"; expected "identifier"; SQL statement:
+drop table order [42001-200]
+2020-10-05 17:19:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        CLIETE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        cliete integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 17:19:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINE 
+       ADD CONSTRAINT FKSAG994HW7THNJ0XEFJ4GL1WOD 
+       FOREIGN KEY (ORDER_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_line 
+       add constraint FKsag994hw7thnj0xefj4gl1wod 
+       foreign key (order_id) 
+       references order [42001-200]
+2020-10-05 17:20:10 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        CLIETE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        cliete integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-05 17:20:44 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        CLIETE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        cliete integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]

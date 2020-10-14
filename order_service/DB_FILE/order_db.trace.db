@@ -1,0 +1,28 @@
+2020-10-06 10:29:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    CREATE TABLE ORDER[*] (
+       ID INTEGER NOT NULL,
+        COGNOME_CLIENTE VARCHAR(255),
+        ID_CLIENTE INTEGER,
+        NOME_CLIENTE VARCHAR(255),
+        PRIMARY KEY (ID)
+    )"; expected "identifier"; SQL statement:
+
+    create table order (
+       id integer not null,
+        cognome_cliente varchar(255),
+        id_cliente integer,
+        nome_cliente varchar(255),
+        primary key (id)
+    ) [42001-200]
+2020-10-06 10:29:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "
+    ALTER TABLE ORDER_LINE 
+       ADD CONSTRAINT FKPBG76X7PU6E3PG2RE731NIK6M 
+       FOREIGN KEY (ORDINE_ID) 
+       REFERENCES ORDER[*]"; expected "identifier"; SQL statement:
+
+    alter table order_line 
+       add constraint FKpbg76x7pu6e3pg2re731nik6m 
+       foreign key (ordine_id) 
+       references order [42001-200]

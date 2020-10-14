@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: customer-pod
+spec:
+  containers:
+    - name: customer-container
+      image: customer:0.0.1-SNAPSHOT
+      ports:
+        - containerPort: 8090

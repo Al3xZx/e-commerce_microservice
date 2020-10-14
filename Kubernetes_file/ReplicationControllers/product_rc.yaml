@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: product
+spec:
+  replicas: 1
+  selector:
+    app: product
+  template:
+    metadata:
+      name: product
+      labels:
+        app: product
+    spec:
+      containers:
+      - name: product-container
+        image: al3xzx/product
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8091
