@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 @RestController
+@RequestMapping("/product_service")
 public class ProductController {
 
     @Autowired
