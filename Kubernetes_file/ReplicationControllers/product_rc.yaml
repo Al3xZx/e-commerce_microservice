@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: product-container
-        image: al3xzx/product
+        image: al3xzx/product:v0.3
         imagePullPolicy: Always
         ports:
         - containerPort: 8091
