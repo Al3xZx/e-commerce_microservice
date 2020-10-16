@@ -1,6 +1,7 @@
 package com.alessandro.product.a_controller;
 
 import com.alessandro.product.b_service.ProductService;
+import com.alessandro.product.d_entity.Product;
 import com.alessandro.product.support.exception.ProductException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class ProductController {
     }
 
     @GetMapping(value = "/product/{idProduct}")
-    public ResponseEntity product(@PathVariable int idProduct){
+    public ResponseEntity<Product> product(@PathVariable int idProduct){
         try {
             return new ResponseEntity(productService.getProduct(idProduct),HttpStatus.OK);
         } catch (ProductException e) {
