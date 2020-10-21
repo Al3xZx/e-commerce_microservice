@@ -1,0 +1,32 @@
+#product
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    app: product
+  ports:
+    - port: 8091
+  type: NodePort
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: product
+spec:
+  replicas: 1
+  selector:
+    app: product
+  template:
+    metadata:
+      name: product
+      labels:
+        app: product
+    spec:
+      containers:
+      - name: product-container
+        image: al3xzx/product:v0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8091

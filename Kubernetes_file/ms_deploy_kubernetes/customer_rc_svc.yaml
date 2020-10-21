@@ -1,0 +1,32 @@
+#customer
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service
+spec:
+  selector:
+    app: customer
+  ports:
+    - port: 8090
+  type: NodePort
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: customer
+spec:
+  replicas: 1
+  selector:
+    app: customer
+  template:
+    metadata:
+      name: customer
+      labels:
+        app: customer
+    spec:
+      containers:
+      - name: customer-container
+        image: al3xzx/customer:v0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8090

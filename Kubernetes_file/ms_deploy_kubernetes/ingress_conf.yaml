@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: api-ingress
+spec:
+  rules:
+    - host: ecom.info
+      http:
+        paths:
+        - path: /customer_service
+          pathType: Prefix
+          backend:
+            serviceName: customer-service
+            servicePort: 8090
+        - path: /product_service
+          pathType: Prefix
+          backend:
+            serviceName: product-service
+            servicePort: 8091
+        - path: /order_service
+          pathType: Prefix
+          backend:
+            serviceName: order-service
+            servicePort: 8092
