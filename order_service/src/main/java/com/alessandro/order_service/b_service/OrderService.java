@@ -53,8 +53,8 @@ public class OrderService {
             if(!backupProdottoQta.isEmpty()){
                 RestTemplate restTemplate = new RestTemplate();
                 for(int idP : backupProdottoQta.keySet()){
-                    //restTemplate.put("http://192.168.8.100:8080/product_service/product/"+idP+"/update_qta/"+backupProdottoQta.get(idP),null);
-                    restTemplate.put("http://{ip}:8080/product_service/product/{idProdotto}/update_qta/{qta}",null, this.ipApiGateway, idP, backupProdottoQta.get(idP));
+                    restTemplate.put("http://{ip}:8080/product_service/product/{idProdotto}/update_qta/{qta}",
+                            null, this.ipApiGateway, idP, backupProdottoQta.get(idP));
                 }
             }
             throw new OrderException(e.getMessage());
