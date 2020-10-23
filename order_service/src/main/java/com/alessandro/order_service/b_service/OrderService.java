@@ -22,8 +22,17 @@ import java.util.Map;
 @Service
 public class OrderService {
 
-    @Value("${apigateway.ip}")
-    private String ipApiGateway;
+    @Value("${customerService.ip}")
+    private String ipCustomer;
+
+    @Value("${productService.ip}")
+    private String ipProduct;
+
+    @Value("${customerService.port}")
+    private String portCustomer;
+
+    @Value("${productService.port}")
+    private String portProduct;
 
     @Autowired
     OrderRepository orderRepository;
@@ -46,20 +55,18 @@ public class OrderService {
                 ol.setOrdine(ret);
                 ret.getLineaOrdine().add(ol);
             }
-
             orderRepository.save(ret);
             return ret;
         }catch (OrderException e){
             if(!backupProdottoQta.isEmpty()){
                 RestTemplate restTemplate = new RestTemplate();
                 for(int idP : backupProdottoQta.keySet()){
-                    //restTemplate.put("http://192.168.8.100:8080/product_service/product/"+idP+"/update_qta/"+backupProdottoQta.get(idP),null);
-                    restTemplate.put("http://{ip}:8080/product_service/product/{idProdotto}/update_qta/{qta}",null, this.ipApiGateway, idP, backupProdottoQta.get(idP));
+                    restTemplate.put("http://{ip}:{port}/product_service/product/{idProdotto}/update_qta/{qta}",
+                                                                        null, this.ipProduct, this.portProduct, idP, backupProdottoQta.get(idP));
                 }
             }
             throw new OrderException(e.getMessage());
         }
-
     }
 
     /**
@@ -73,7 +80,7 @@ public class OrderService {
 
         String JsonProduct;
         try {
-            JsonProduct = restTemplate.getForObject("http://{ip}:8080/product_service/product/{id}", String.class, this.ipApiGateway, ol.getIdProdotto());
+            JsonProduct = restTemplate.getForObject("http://{ip}:{port}/product_service/product/{id}", String.class, this.ipProduct, this.portProduct, ol.getIdProdotto());
         }catch (HttpClientErrorException e){
             throw new OrderException("errore nel reperire i dati del prdotto "+ol.getIdProdotto());
         }
@@ -88,9 +95,10 @@ public class OrderService {
             if(ol.getQta().compareTo( rootNode.path("qta").asInt() ) > 0)
                 throw new OrderException("la quantità disponibile del prodotto "+ ol.getNomeProdotto()+" è inferiore a quella richiesta");
             bk.put(ol.getIdProdotto(),ol.getQta());
-            restTemplate.put("http://{ip}:8080/product_service/product/{idProdotto}/update_qta/{qta}",null, this.ipApiGateway, ol.getIdProdotto(), ol.getQta()*-1);
+            restTemplate.put("http://{ip}:{port}/product_service/product/{idProdotto}/update_qta/{qta}",null, this.ipProduct, this.portProduct, ol.getIdProdotto(), ol.getQta()*-1);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            throw new OrderException("");
         }
     }
 
@@ -104,7 +112,7 @@ public class OrderService {
         RestTemplate restTemplate = new RestTemplate();
         String JsonCustomer;
         try{
-            JsonCustomer = restTemplate.getForObject("http://{ip}:8080/customer_service/customer/{id}", String.class, this.ipApiGateway,idCliente);
+            JsonCustomer = restTemplate.getForObject("http://{ip}:{port}/customer_service/customer/{id}", String.class, this.ipCustomer, this.portCustomer,idCliente);
         }catch (HttpClientErrorException e){
             throw new OrderException("errore nel reperire i dati del cliente "+idCliente);
         }
@@ -118,6 +126,7 @@ public class OrderService {
             o.setIdCliente(idCliente);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            throw new OrderException("");
         }
     }
 
