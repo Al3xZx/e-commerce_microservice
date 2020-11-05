@@ -44,7 +44,7 @@ public class OrderService {
      * @throws OrderException
      */
     @Transactional(readOnly = false)
-    public Order create(Order order) throws OrderException {//TODO Test --> tested
+    public Order create(Order order) throws OrderException {//TODO Test
 
         Map<Integer, Integer> backupProdottoQta = new HashMap<>();
         try {
@@ -62,8 +62,7 @@ public class OrderService {
                 RestTemplate restTemplate = new RestTemplate();
                 for(int idP : backupProdottoQta.keySet()){
                     restTemplate.put("http://{ip}:{port}/product_service/product/{idProdotto}/update_qta/{qta}",
-                                        null, this.ipProduct, this.portProduct, idP, backupProdottoQta.get(idP)
-                                    );
+                                                                        null, this.ipProduct, this.portProduct, idP, backupProdottoQta.get(idP));
                 }
             }
             throw new OrderException(e.getMessage());
@@ -81,9 +80,7 @@ public class OrderService {
 
         String JsonProduct;
         try {
-            JsonProduct = restTemplate.getForObject("http://{ip}:{port}/product_service/product/{id}", 
-                                                    String.class, this.ipProduct, this.portProduct, ol.getIdProdotto()
-                                                    );
+            JsonProduct = restTemplate.getForObject("http://{ip}:{port}/product_service/product/{id}", String.class, this.ipProduct, this.portProduct, ol.getIdProdotto());
         }catch (HttpClientErrorException e){
             throw new OrderException("errore nel reperire i dati del prdotto "+ol.getIdProdotto());
         }
@@ -98,9 +95,7 @@ public class OrderService {
             if(ol.getQta().compareTo( rootNode.path("qta").asInt() ) > 0)
                 throw new OrderException("la quantità disponibile del prodotto "+ ol.getNomeProdotto()+" è inferiore a quella richiesta");
             bk.put(ol.getIdProdotto(),ol.getQta());
-            restTemplate.put("http://{ip}:{port}/product_service/product/{idProdotto}/update_qta/{qta}",
-                             null, this.ipProduct, this.portProduct, ol.getIdProdotto(), ol.getQta()*-1
-                            );
+            restTemplate.put("http://{ip}:{port}/product_service/product/{idProdotto}/update_qta/{qta}",null, this.ipProduct, this.portProduct, ol.getIdProdotto(), ol.getQta()*-1);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             throw new OrderException("");
@@ -117,9 +112,7 @@ public class OrderService {
         RestTemplate restTemplate = new RestTemplate();
         String JsonCustomer;
         try{
-            JsonCustomer = restTemplate.getForObject("http://{ip}:{port}/customer_service/customer/{id}", 
-                                                        String.class, this.ipCustomer, this.portCustomer,idCliente
-                                                    );
+            JsonCustomer = restTemplate.getForObject("http://{ip}:{port}/customer_service/customer/{id}", String.class, this.ipCustomer, this.portCustomer,idCliente);
         }catch (HttpClientErrorException e){
             throw new OrderException("errore nel reperire i dati del cliente "+idCliente);
         }
