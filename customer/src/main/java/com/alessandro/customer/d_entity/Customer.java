@@ -17,12 +17,15 @@ public class Customer {
 
     private String cognome;
 
+    private Double credit;
+
     public Customer() {
     }
 
-    public Customer(String nome, String cognome) {
+    public Customer(String nome, String cognome, double credit) {
         this.nome = nome;
         this.cognome = cognome;
+        this.credit = credit;
     }
 
     public Integer getId() {
@@ -47,5 +50,23 @@ public class Customer {
 
     public void setCognome(String cognome) {
         this.cognome = cognome;
+    }
+
+    public Double getCredit() {
+        return credit;
+    }
+
+    public void setCredit(Double credit) {
+        this.credit = credit;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", cognome='" + cognome + '\'' +
+                ", credit=" + credit +
+                '}';
     }
 }
