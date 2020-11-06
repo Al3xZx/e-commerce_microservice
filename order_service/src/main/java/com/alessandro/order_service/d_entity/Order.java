@@ -18,6 +18,13 @@ public class Order {
 
     private String cognomeCliente;
 
+    private Double totale; // foreach orderline in lineaOrdine
+                           //         totale += orderline.getTotale();
+
+    private String state;//SOSPESO, CONFERMATO, ANNULLATO
+
+    private String messageState;
+
     @OneToMany(mappedBy = "ordine", cascade = CascadeType.ALL)
     private List<OrderLine> lineaOrdine = new LinkedList<>();
 
@@ -59,5 +66,29 @@ public class Order {
 
     public void setLineaOrdine(List<OrderLine> lineaOrdine) {
         this.lineaOrdine = lineaOrdine;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getMessageState() {
+        return messageState;
+    }
+
+    public void setMessageState(String messageState) {
+        this.messageState = messageState;
+    }
+
+    public Double getTotale() {
+        return totale;
+    }
+
+    public void setTotale(Double totale) {
+        this.totale = totale;
     }
 }
