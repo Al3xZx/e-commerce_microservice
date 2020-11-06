@@ -50,6 +50,7 @@ public class ProductController {
     public ResponseEntity genera(@PathVariable int inizio,@PathVariable int fine){
         if(productService.getAllProduct().size() != 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(productService.generaProdotti(inizio, fine),HttpStatus.CREATED);
+        productService.generaProdotti(inizio, fine);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }

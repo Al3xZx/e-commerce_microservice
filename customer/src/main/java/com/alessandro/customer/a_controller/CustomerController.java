@@ -48,7 +48,8 @@ public class CustomerController{
     public ResponseEntity genera(@PathVariable int inizio,@PathVariable int fine){
         if(customerService.getAllCustomer().size() != 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(customerService.generaCienti(inizio, fine),HttpStatus.CREATED);
+        customerService.generaCienti(inizio, fine);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
 //    @Override

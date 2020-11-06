@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class ProductService {
@@ -49,8 +51,12 @@ public class ProductService {
     @Transactional
     public List<Product> generaProdotti(int inizio, int fine){
         //inizio e fine inclusi
+        Random r = new Random();
+        //double randomValue = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
         for(int i = inizio; i<= fine; i++){
-            productRepository.save(new Product("nomePrdotto_"+i,150));
+            double d = 1+(150-1)*r.nextDouble();
+            double price =  Math.floor(d * 100) / 100;
+            productRepository.save(new Product("nomePrdotto_"+i,150, price));
             try {
                 Thread.sleep(800);
             } catch (InterruptedException e) {

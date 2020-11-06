@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class CustomerService {
@@ -30,8 +31,11 @@ public class CustomerService {
 
     @Transactional
     public List<Customer> generaCienti(int inizio, int fine) {
+        Random r = new Random();
         for(int i = inizio; i<= fine; i++){
-            customerRepository.save(new Customer("nomeCustomer_"+i,"cognomeCustomer_"+i));
+            double d = 25+(1500-25)*r.nextDouble();
+            double credit =  Math.floor(d * 100) / 100;
+            customerRepository.save(new Customer("nomeCustomer_"+i,"cognomeCustomer_"+i, credit));
             try {
                 Thread.sleep(800);
             } catch (InterruptedException e) {
