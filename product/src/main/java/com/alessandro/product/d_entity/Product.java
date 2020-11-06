@@ -16,13 +16,16 @@ public class Product {
 
     private Integer qta;//disponibilità
 
+    private Double price;
+
     public Product() {
     }
 
-    public Product(String name, int qta) {
+    public Product(String name, int qta, double price) {
         this.id = id;
         this.name = name;
         this.qta = qta;
+        this.price = price;
     }
 
     public Integer getId() {
@@ -47,5 +50,23 @@ public class Product {
 
     public void setQta(Integer qta) {
         this.qta = qta;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", qta=" + qta +
+                ", price=" + price +
+                '}';
     }
 }
