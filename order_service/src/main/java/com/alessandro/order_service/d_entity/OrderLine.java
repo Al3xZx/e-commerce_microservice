@@ -15,7 +15,11 @@ public class OrderLine {
 
     private String nomeProdotto;
 
+    private Double prezzoProdotto;
+
     private Integer qta;
+
+    private Double totale; //prezzoPordotto * qta
 
     @ManyToOne
     @JoinColumn
@@ -60,5 +64,21 @@ public class OrderLine {
 
     public void setOrdine(Order ordine) {
         this.ordine = ordine;
+    }
+
+    public Double getTotale() {
+        return totale;
+    }
+
+    public void setTotale(Double totale) {
+        this.totale = totale;
+    }
+
+    public Double getPrezzoProdotto() {
+        return prezzoProdotto;
+    }
+
+    public void setPrezzoProdotto(Double prezzoProdotto) {
+        this.prezzoProdotto = prezzoProdotto;
     }
 }
