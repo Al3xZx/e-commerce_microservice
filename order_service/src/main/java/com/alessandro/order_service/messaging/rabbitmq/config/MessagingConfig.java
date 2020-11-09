@@ -15,7 +15,7 @@ public class MessagingConfig {
     public static final String CHECK_CUSTOMER_QUEUE_NAME = "CHECK_CUSTOMER";
     public static final String CREDIT_ROLLBACK_QUEUE_NAME = "CREDIT_ROLLBACK";
     public static final String CHECK_PRODUCTS_QUEUE_NAME = "CHECK_PRODUCTS";
-    public static final String PRODUCTS_QTY_ROLLBACK_QUEUE_NAME = "PRODUCTS_QTY_ROLLBACK";
+    //public static final String PRODUCTS_QTY_ROLLBACK_QUEUE_NAME = "PRODUCTS_QTY_ROLLBACK";
 
     //exchanger
     public static final String EXCHANGER_ORDER_SERVICE_NAME = "EXCHANGER_ORDER_SERVICE";
@@ -47,10 +47,10 @@ public class MessagingConfig {
         return new Queue(CHECK_PRODUCTS_QUEUE_NAME);
     }
 
-    @Bean
-    public Queue productsQtyRollback(){
-        return new Queue(PRODUCTS_QTY_ROLLBACK_QUEUE_NAME);
-    }
+//    @Bean
+//    public Queue productsQtyRollback(){
+//        return new Queue(PRODUCTS_QTY_ROLLBACK_QUEUE_NAME);
+//    }
 
     @Bean
     public TopicExchange exchangeOrderService(){
@@ -72,10 +72,10 @@ public class MessagingConfig {
         return BindingBuilder.bind(checkProducts).to(exchange).with(ROUTINGKEY_CHECK_PRODUCTS_NAME);
     }
 
-    @Bean
-    public Binding binding4(Queue productsQtyRollback, TopicExchange exchange){
-        return BindingBuilder.bind(productsQtyRollback).to(exchange).with(ROUTINGKEY_PRODUCTS_QTY_ROLLBACK_NAME);
-    }
+//    @Bean
+//    public Binding binding4(Queue productsQtyRollback, TopicExchange exchange){
+//        return BindingBuilder.bind(productsQtyRollback).to(exchange).with(ROUTINGKEY_PRODUCTS_QTY_ROLLBACK_NAME);
+//    }
 
     @Bean
     public MessageConverter converter(){

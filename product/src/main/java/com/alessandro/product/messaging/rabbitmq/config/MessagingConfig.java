@@ -22,7 +22,7 @@ public class MessagingConfig {
 
     //subscribe queue
     public static final String CHECK_PRODUCTS_QUEUE_NAME = "CHECK_PRODUCTS";
-    public static final String PRODUCTS_QTY_ROLLBACK_QUEUE_NAME = "PRODUCTS_QTY_ROLLBACK";
+    //public static final String PRODUCTS_QTY_ROLLBACK_QUEUE_NAME = "PRODUCTS_QTY_ROLLBACK";
 
     @Bean
     public Queue resultCheckProducts(){
