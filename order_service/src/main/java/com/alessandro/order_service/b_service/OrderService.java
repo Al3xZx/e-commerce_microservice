@@ -50,7 +50,7 @@ public class OrderService {
         totaleOrdine = Math.floor(totaleOrdine*100)/100;//prelevo le prime due cifre decimali
         order.setTotale(totaleOrdine);
 
-        //salvo ordeine temporaneo
+        //salvo ordine temporaneo
         orderRepository.save(order);
 
         //invio messaggio di verifica del cliente
