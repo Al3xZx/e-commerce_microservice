@@ -81,7 +81,7 @@
                 <version>2.2.0</version>
                 <configuration>
                     <deploy.projectId>project-test-gcp-294714</deploy.projectId>
-                    <deploy.version>2</deploy.version>
+                    <deploy.version>1</deploy.version>
                     <!--devserver.port>8092</devserver.port-->
                 </configuration>
             </plugin>
