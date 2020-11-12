@@ -4,11 +4,11 @@ import com.alessandro.product.c_repository.ProductRepository;
 import com.alessandro.product.d_entity.Product;
 import com.alessandro.product.messaging.dto.OrderLine;
 import com.alessandro.product.messaging.dto.ProductsOL;
-import com.alessandro.product.messaging.rabbitmq.config.MessagingConfig;
+import com.alessandro.product.messaging.pubsub.conf.PubSubConf;
 import com.alessandro.product.support.exception.ProductException;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,22 +21,30 @@ public class MessageHandler {
     ProductRepository productRepository;
 
     @Autowired
-    RabbitTemplate rabbitTemplate;
+    PubSubTemplate pubSubTemplate;
 
-    @RabbitListener(queues = MessagingConfig.CHECK_PRODUCTS_QUEUE_NAME)
+    @Bean
+    public void readMessage(){
+        pubSubTemplate.subscribeAndConvert(
+                PubSubConf.CHECK_PRODUCTS_SUBSCRIPTION,
+                (message) ->{
+                    ProductsOL p = message.getPayload();
+                    message.ack();
+                    checkProducts(p);
+
+                },
+                ProductsOL.class
+        );
+    }
+
     public void checkProducts(ProductsOL message){
-        System.out.println("Message received from queue "+MessagingConfig.CHECK_PRODUCTS_QUEUE_NAME);
+        System.out.println("Message received from topic "+PubSubConf.CHECK_PRODUCTS_SUBSCRIPTION);
         try {
             checkProductsAndUpdateQty(message);
         } catch (ProductException e) {
-            rabbitTemplate.convertAndSend(
-                    MessagingConfig.EXCHANGER_PRODUCT_SERVICE_NAME,
-                    MessagingConfig.ROUTINGKEY_RESULT_CHECK_PRODUCTS_NAME,
-                    new ProductsOL(
-                            null,
-                            message.getOrderId(),
-                            e.getMessage()
-                    )
+            pubSubTemplate.publish(
+                    PubSubConf.RESULT_CHECK_PRODUCTS_TOPIC,
+                    new ProductsOL(null, message.getOrderId(), e.getMessage())
             );
         }
     }//checkProductsAndUpdateQty
@@ -58,16 +66,11 @@ public class MessageHandler {
             }
             ol.setNomeProdotto(p.getName());
             p.setQta(p.getQta()-ol.getQta());
+            productRepository.saveAndFlush(p);
         }//for
-
-        rabbitTemplate.convertAndSend(
-                MessagingConfig.EXCHANGER_PRODUCT_SERVICE_NAME,
-                MessagingConfig.ROUTINGKEY_RESULT_CHECK_PRODUCTS_NAME,
-                new ProductsOL(
-                        message.getOrderLineList(),
-                        message.getOrderId(),
-                        "verifica effettuata con successo"
-                )
+        pubSubTemplate.publish(
+                PubSubConf.RESULT_CHECK_PRODUCTS_TOPIC,
+                new ProductsOL(message.getOrderLineList(), message.getOrderId(),  "verifica effettuata con successo")
         );
     }
 }

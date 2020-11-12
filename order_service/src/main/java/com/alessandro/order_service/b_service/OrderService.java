@@ -4,10 +4,11 @@ import com.alessandro.order_service.c_repository.OrderRepository;
 import com.alessandro.order_service.d_entity.Order;
 import com.alessandro.order_service.d_entity.OrderLine;
 import com.alessandro.order_service.messaging.dto.MessageCustomerCheck;
-import com.alessandro.order_service.messaging.rabbitmq.config.MessagingConfig;
+import com.alessandro.order_service.messaging.dto.ProductsOL;
+import com.alessandro.order_service.messaging.pubsub.conf.PubSubConf;
 import com.alessandro.order_service.support.exception.OrderException;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class OrderService {
     OrderRepository orderRepository;
 
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    PubSubTemplate pubSubTemplate;
 
     public List<Order> customerOrder(int idCustomer){
         return orderRepository.findByIdCliente(idCustomer);
@@ -53,12 +54,12 @@ public class OrderService {
         //salvo ordine temporaneo
         orderRepository.save(order);
 
-        //invio messaggio di verifica del cliente
-        rabbitTemplate.convertAndSend(
-                MessagingConfig.EXCHANGER_ORDER_SERVICE_NAME,
-                MessagingConfig.ROUTINGKEY_CHECK_CUSTOMER_NAME,
+        pubSubTemplate.publish(
+                PubSubConf.CHECK_CUSTOMER_TOPIC,
                 new MessageCustomerCheck(order.getIdCliente(), order.getId(), totaleOrdine)
         );
+        System.out.println("messaggio inviato: {" + order.getIdCliente() + ", " + order.getId() + ", " + totaleOrdine + "}");
+
         return order;
     }
 

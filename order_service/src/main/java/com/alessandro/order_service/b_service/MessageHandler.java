@@ -6,12 +6,14 @@ import com.alessandro.order_service.messaging.dto.Customer;
 import com.alessandro.order_service.messaging.dto.MessageCustomerRollback;
 import com.alessandro.order_service.messaging.dto.ProductsOL;
 import com.alessandro.order_service.messaging.dto.ResultCustomerCheck;
-import com.alessandro.order_service.messaging.rabbitmq.config.MessagingConfig;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import com.alessandro.order_service.messaging.pubsub.conf.PubSubConf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.ExecutionException;
 
 
 @Service
@@ -21,30 +23,58 @@ public class MessageHandler {
     private OrderRepository orderRepository;
 
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    PubSubTemplate pubSubTemplate;
 
-    @RabbitListener(queues = MessagingConfig.RESULT_CHECK_CUSTOMER_QUEUE_NAME)
+
+    @Bean
+    public void readResultCheckCustomer(){
+        pubSubTemplate.subscribeAndConvert(
+                PubSubConf.RESULT_CHECK_CUSTOMER_SUBSCRIPTION,
+                (message) ->{
+                    ResultCustomerCheck r = message.getPayload();
+                    message.ack();
+                    checkCustomerAndSendCheckProducts(r);
+                },
+                ResultCustomerCheck.class
+        );
+    }
+
     @Transactional(readOnly = false)
     public void checkCustomerAndSendCheckProducts(ResultCustomerCheck resultCustomerCheck) {
-//        System.out.println("Message received from queue "+MessagingConfig.RESULT_CHECK_CUSTOMER_QUEUE_NAME);
-//        System.out.println(resultCustomerCheck.getCustomer());
+        System.out.println("Message received from queue "+PubSubConf.RESULT_CHECK_CUSTOMER_SUBSCRIPTION);
+        System.out.println(resultCustomerCheck.getCustomer());
         Order o = orderRepository.findById(resultCustomerCheck.getOrderId()).get();
         Customer c = resultCustomerCheck.getCustomer();
         if(c == null) {
             o.setState("ANNULLATO");
             o.setMessageState(resultCustomerCheck.getMessageResult());
+            orderRepository.saveAndFlush(o);
         }else{
             o.setNomeCliente(c.getNome());
             o.setCognomeCliente(c.getCognome());
-            rabbitTemplate.convertAndSend(
-                    MessagingConfig.EXCHANGER_ORDER_SERVICE_NAME,
-                    MessagingConfig.ROUTINGKEY_CHECK_PRODUCTS_NAME,
-                    new ProductsOL(o.getLineaOrdine(), o.getId())
-            );
+            orderRepository.saveAndFlush(o);
+            System.out.println("invio messaggio verifica dei prodotti");
+            //NON VIENE INVIATO
+            pubSubTemplate.publish(PubSubConf.CHECK_PRODUCTS_TOPIC, new ProductsOL(o.getLineaOrdine(), o.getId()));//NON VIENE INVIATO
+            System.out.println("messaggio inserito nel topic " + PubSubConf.CHECK_PRODUCTS_TOPIC);
+
         }
+        
     }
 
-    @RabbitListener(queues = MessagingConfig.RESULT_CHECK_PRODUCTS_QUEUE_NAME)
+    @Bean
+    public void readResultCheckProducts(){
+        pubSubTemplate.subscribeAndConvert(
+                PubSubConf.RESULT_CHECK_PRODUCTS_SUBSCRIPTION,
+                (message) ->{
+                    ProductsOL m = message.getPayload();
+                    message.ack();
+                    resultCheckProducts(m);
+                },
+                ProductsOL.class
+        );
+    }
+    
     @Transactional(readOnly = false)
     public void resultCheckProducts(ProductsOL message) {
         System.out.println("resultCheckProducts");
@@ -52,19 +82,16 @@ public class MessageHandler {
         if(message.getOrderLineList() == null){
             //rimborsare il cliente
             System.out.println("rimborsare il cliente");
-            rabbitTemplate.convertAndSend(
-                    MessagingConfig.EXCHANGER_ORDER_SERVICE_NAME,
-                    MessagingConfig.ROUTINGKEY_CREDIT_ROLLBACK_NAME,
-                    new MessageCustomerRollback(o.getIdCliente(), o.getTotale())
-            );
+            pubSubTemplate.publish(PubSubConf.CREDIT_ROLLBACK_TOPIC, new MessageCustomerRollback(o.getIdCliente(), o.getTotale()));
             //impostare lo stato dell'ordine su annullato
             o.setState("ANNULLATO");
             o.setMessageState(message.getMessage());
+            orderRepository.saveAndFlush(o);
         }else{
             o.setState("CONFERMATO");
             o.setMessageState("ordine confermato");
+            orderRepository.saveAndFlush(o);
         }
+
     }
-
-
 }
