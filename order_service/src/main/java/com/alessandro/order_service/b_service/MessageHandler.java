@@ -92,6 +92,5 @@ public class MessageHandler {
             o.setMessageState("ordine confermato");
             orderRepository.saveAndFlush(o);
         }
-
     }
 }

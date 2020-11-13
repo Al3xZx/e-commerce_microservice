@@ -60,8 +60,11 @@ public class OrderService {
         );
         System.out.println("messaggio inviato: {" + order.getIdCliente() + ", " + order.getId() + ", " + totaleOrdine + "}");
 
+//        pubSubTemplate.publish(
+//                PubSubConf.CHECK_PRODUCTS_TOPIC,
+//                new ProductsOL(order.getLineaOrdine(), order.getId())
+//        );
         return order;
     }
-
 
 }
