@@ -87,6 +87,15 @@
             <version>1.2.6.RELEASE</version>
         </dependency>
 
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.integration/spring-integration-core -->
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-core</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

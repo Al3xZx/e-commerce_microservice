@@ -5,10 +5,12 @@ import com.alessandro.product.d_entity.Product;
 import com.alessandro.product.messaging.dto.OrderLine;
 import com.alessandro.product.messaging.dto.ProductsOL;
 import com.alessandro.product.messaging.pubsub.conf.PubSubConf;
+import com.alessandro.product.messaging.pubsub.conf.SendMsgConfig;
 import com.alessandro.product.support.exception.ProductException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.context.annotation.Bean;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +23,11 @@ public class MessageHandler {
     ProductRepository productRepository;
 
     @Autowired
-    PubSubTemplate pubSubTemplate;
+    SendMsgConfig.ResultCheckProductsOutboundGateway resultCheckProductsOutboundGateway;
 
-    @Bean
-    public void readMessage(){
-        pubSubTemplate.subscribeAndConvert(
-                PubSubConf.CHECK_PRODUCTS_SUBSCRIPTION,
-                (message) ->{
-                    ProductsOL p = message.getPayload();
-                    message.ack();
-                    checkProducts(p);
-
-                },
-                ProductsOL.class
-        );
+    @ServiceActivator(inputChannel = "checkProductInputChannel")
+    public void readMessage(ProductsOL payload){
+        checkProducts(payload);
     }
 
     public void checkProducts(ProductsOL message){
@@ -42,8 +35,7 @@ public class MessageHandler {
         try {
             checkProductsAndUpdateQty(message);
         } catch (ProductException e) {
-            pubSubTemplate.publish(
-                    PubSubConf.RESULT_CHECK_PRODUCTS_TOPIC,
+            resultCheckProductsOutboundGateway.sendResultCheckProductsToPubSub(
                     new ProductsOL(null, message.getOrderId(), e.getMessage())
             );
         }
@@ -68,8 +60,7 @@ public class MessageHandler {
             p.setQta(p.getQta()-ol.getQta());
             productRepository.saveAndFlush(p);
         }//for
-        pubSubTemplate.publish(
-                PubSubConf.RESULT_CHECK_PRODUCTS_TOPIC,
+        resultCheckProductsOutboundGateway.sendResultCheckProductsToPubSub(
                 new ProductsOL(message.getOrderLineList(), message.getOrderId(),  "verifica effettuata con successo")
         );
     }

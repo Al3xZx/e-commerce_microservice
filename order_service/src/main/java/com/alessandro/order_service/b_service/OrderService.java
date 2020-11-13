@@ -6,6 +6,7 @@ import com.alessandro.order_service.d_entity.OrderLine;
 import com.alessandro.order_service.messaging.dto.MessageCustomerCheck;
 import com.alessandro.order_service.messaging.dto.ProductsOL;
 import com.alessandro.order_service.messaging.pubsub.conf.PubSubConf;
+import com.alessandro.order_service.messaging.pubsub.conf.SendMsgConfig;
 import com.alessandro.order_service.support.exception.OrderException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
@@ -22,7 +23,7 @@ public class OrderService {
     OrderRepository orderRepository;
 
     @Autowired
-    PubSubTemplate pubSubTemplate;
+    SendMsgConfig.CheckCustomerOutboundGateway checkCustomerOutboundGateway;
 
     public List<Order> customerOrder(int idCustomer){
         return orderRepository.findByIdCliente(idCustomer);
@@ -54,16 +55,10 @@ public class OrderService {
         //salvo ordine temporaneo
         orderRepository.save(order);
 
-        pubSubTemplate.publish(
-                PubSubConf.CHECK_CUSTOMER_TOPIC,
-                new MessageCustomerCheck(order.getIdCliente(), order.getId(), totaleOrdine)
-        );
+        checkCustomerOutboundGateway.sendCheckCustomerToPubSub(new MessageCustomerCheck(order.getIdCliente(), order.getId(), totaleOrdine));
+
         System.out.println("messaggio inviato: {" + order.getIdCliente() + ", " + order.getId() + ", " + totaleOrdine + "}");
 
-//        pubSubTemplate.publish(
-//                PubSubConf.CHECK_PRODUCTS_TOPIC,
-//                new ProductsOL(order.getLineaOrdine(), order.getId())
-//        );
         return order;
     }
 

@@ -2,17 +2,24 @@ package com.alessandro.order_service.b_service;
 
 import com.alessandro.order_service.c_repository.OrderRepository;
 import com.alessandro.order_service.d_entity.Order;
+import com.alessandro.order_service.d_entity.OrderLine;
 import com.alessandro.order_service.messaging.dto.Customer;
 import com.alessandro.order_service.messaging.dto.MessageCustomerRollback;
 import com.alessandro.order_service.messaging.dto.ProductsOL;
 import com.alessandro.order_service.messaging.dto.ResultCustomerCheck;
 import com.alessandro.order_service.messaging.pubsub.conf.PubSubConf;
+import com.alessandro.order_service.messaging.pubsub.conf.SendMsgConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
+import org.springframework.cloud.gcp.pubsub.support.BasicAcknowledgeablePubsubMessage;
+import org.springframework.cloud.gcp.pubsub.support.GcpPubSubHeaders;
 import org.springframework.context.annotation.Bean;
+import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -20,23 +27,19 @@ import java.util.concurrent.ExecutionException;
 public class MessageHandler {
 
     @Autowired
-    private OrderRepository orderRepository;
+    OrderRepository orderRepository;
 
     @Autowired
-    PubSubTemplate pubSubTemplate;
+    SendMsgConfig.CheckProductsOutboundGateway checkProductsOutboundGateway;
+
+    @Autowired
+    SendMsgConfig.CreditRollbackOutboundGateway creditRollbackOutboundGateway;
 
 
-    @Bean
-    public void readResultCheckCustomer(){
-        pubSubTemplate.subscribeAndConvert(
-                PubSubConf.RESULT_CHECK_CUSTOMER_SUBSCRIPTION,
-                (message) ->{
-                    ResultCustomerCheck r = message.getPayload();
-                    message.ack();
-                    checkCustomerAndSendCheckProducts(r);
-                },
-                ResultCustomerCheck.class
-        );
+    @ServiceActivator(inputChannel = "resultCheckCustomerInputChannel")
+    public void readResultCheckCustomer(ResultCustomerCheck payload){
+        checkCustomerAndSendCheckProducts(payload);
+
     }
 
     @Transactional(readOnly = false)
@@ -54,25 +57,21 @@ public class MessageHandler {
             o.setCognomeCliente(c.getCognome());
             orderRepository.saveAndFlush(o);
             System.out.println("invio messaggio verifica dei prodotti");
-            //NON VIENE INVIATO
-            pubSubTemplate.publish(PubSubConf.CHECK_PRODUCTS_TOPIC, new ProductsOL(o.getLineaOrdine(), o.getId()));//NON VIENE INVIATO
+
+            List<OrderLine> l = o.getLineaOrdine();
+            for(OrderLine ol : l){
+                System.out.println(ol.getIdProdotto());
+            }
+            //checkProductsOutboundGateway.sendCheckProductsToPubSub(new ProductsOL(l, o.getId()));
             System.out.println("messaggio inserito nel topic " + PubSubConf.CHECK_PRODUCTS_TOPIC);
 
         }
         
     }
 
-    @Bean
-    public void readResultCheckProducts(){
-        pubSubTemplate.subscribeAndConvert(
-                PubSubConf.RESULT_CHECK_PRODUCTS_SUBSCRIPTION,
-                (message) ->{
-                    ProductsOL m = message.getPayload();
-                    message.ack();
-                    resultCheckProducts(m);
-                },
-                ProductsOL.class
-        );
+    @ServiceActivator(inputChannel = "resultCheckProductInputChannel")
+    public void readResultCheckProducts(ProductsOL payload){
+        resultCheckProducts(payload);
     }
     
     @Transactional(readOnly = false)
@@ -82,7 +81,7 @@ public class MessageHandler {
         if(message.getOrderLineList() == null){
             //rimborsare il cliente
             System.out.println("rimborsare il cliente");
-            pubSubTemplate.publish(PubSubConf.CREDIT_ROLLBACK_TOPIC, new MessageCustomerRollback(o.getIdCliente(), o.getTotale()));
+            creditRollbackOutboundGateway.sendCreditRollbackToPubSub(new MessageCustomerRollback(o.getIdCliente(), o.getTotale()));
             //impostare lo stato dell'ordine su annullato
             o.setState("ANNULLATO");
             o.setMessageState(message.getMessage());

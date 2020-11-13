@@ -25,7 +25,7 @@ public class Order {
 
     private String messageState;
 
-    @OneToMany(mappedBy = "ordine", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ordine", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderLine> lineaOrdine = new LinkedList<>();
 
     public Integer getId() {

@@ -6,9 +6,11 @@ import com.alessandro.customer.messaging.dto.MessageCustomerCheck;
 import com.alessandro.customer.messaging.dto.MessageCustomerRollback;
 import com.alessandro.customer.messaging.dto.ResultCustomerCheck;
 import com.alessandro.customer.messaging.pubsub.conf.PubSubConf;
+import com.alessandro.customer.messaging.pubsub.conf.SendMsgConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.context.annotation.Bean;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,21 +24,12 @@ public class MessageHandler {
     CustomerRepository customerRepository;
 
     @Autowired
-    PubSubTemplate pubSubTemplate;
+    SendMsgConfig.ResultCheckCustomerOutboundGateway resultCheckCustomerOutboundGateway;
 
 
-    @Bean
-    public void checkCustomerListener(){
-        pubSubTemplate.subscribeAndConvert(
-                PubSubConf.CHECK_CUSTOMER_SUBSCRIPTION,
-                (message) ->{
-                    MessageCustomerCheck m = message.getPayload();
-                    message.ack();
-                    checkCustomer(m);
-
-                },
-                MessageCustomerCheck.class
-        );
+    @ServiceActivator(inputChannel = "checkCustomerInputChannel")
+    public void checkCustomerListener(MessageCustomerCheck payload){
+        checkCustomer(payload);
     }
 
     @Transactional(readOnly = false)
@@ -48,40 +41,28 @@ public class MessageHandler {
             double credit = c.getCredit();
             credit = Math.floor(credit*100)/100;
             if(c.getCredit().compareTo(message.getCreditDecremet()) < 0 ) {
-                pubSubTemplate.publish(
-                        PubSubConf.RESULT_CHECK_CUSTOMER_TOPIC,
+                resultCheckCustomerOutboundGateway.sendResultCheckCustomerToPubSub(
                         new ResultCustomerCheck(null, message.getOrderId(), "credito non sufficiente")
                 );
             }else{
                 double creditDec = credit - message.getCreditDecremet();
                 creditDec =  Math.floor(creditDec*100)/100;
                 c.setCredit(creditDec);
-                pubSubTemplate.publish(
-                        PubSubConf.RESULT_CHECK_CUSTOMER_TOPIC,
+                resultCheckCustomerOutboundGateway.sendResultCheckCustomerToPubSub(
                         new ResultCustomerCheck(c, message.getOrderId(), "credito sufficiente")
                 );
                 customerRepository.saveAndFlush(c);
             }
         }else {
-            pubSubTemplate.publish(
-                    PubSubConf.RESULT_CHECK_CUSTOMER_TOPIC,
+            resultCheckCustomerOutboundGateway.sendResultCheckCustomerToPubSub(
                     new ResultCustomerCheck(null,  message.getOrderId(), "cliente non registrato")
             );
         }
     }//checkCustomer
 
-    @Bean
-    public void refoundCustomerMessage(){
-        pubSubTemplate.subscribeAndConvert(
-                PubSubConf.CREDIT_ROLLBACK_SUBSCRIPTION,
-                (message) ->{
-                    MessageCustomerRollback m = message.getPayload();
-                    message.ack();
-                    refundCustomer(m);
-
-                },
-                MessageCustomerRollback.class
-        );
+    @ServiceActivator(inputChannel = "creditRollbackInputChannel")
+    public void refoundCustomerMessage(MessageCustomerRollback payload){
+        refundCustomer(payload);
     }
 
     @Transactional(readOnly = false)
