@@ -54,8 +54,8 @@ public class MessageHandler {
             o.setCognomeCliente(c.getCognome());
             orderRepository.saveAndFlush(o);
             System.out.println("invio messaggio verifica dei prodotti");
-            //NON VIENE INVIATO
-            pubSubTemplate.publish(PubSubConf.CHECK_PRODUCTS_TOPIC, new ProductsOL(o.getLineaOrdine(), o.getId()));//NON VIENE INVIATO
+            //NON VIENE INVIATO (non veniva inviato poichè il fetch type di order era lazy dunque non prelevava la Linea d'ordine)
+            pubSubTemplate.publish(PubSubConf.CHECK_PRODUCTS_TOPIC, new ProductsOL(o.getLineaOrdine(), o.getId()));
             System.out.println("messaggio inserito nel topic " + PubSubConf.CHECK_PRODUCTS_TOPIC);
 
         }
