@@ -13,8 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.concurrent.ExecutionException;
-
 
 @Service
 public class MessageHandler {
@@ -48,18 +46,14 @@ public class MessageHandler {
         if(c == null) {
             o.setState("ANNULLATO");
             o.setMessageState(resultCustomerCheck.getMessageResult());
-            orderRepository.saveAndFlush(o);
         }else{
             o.setNomeCliente(c.getNome());
             o.setCognomeCliente(c.getCognome());
-            orderRepository.saveAndFlush(o);
             System.out.println("invio messaggio verifica dei prodotti");
-            //NON VIENE INVIATO (non veniva inviato poichè il fetch type di order era lazy dunque non prelevava la Linea d'ordine)
             pubSubTemplate.publish(PubSubConf.CHECK_PRODUCTS_TOPIC, new ProductsOL(o.getLineaOrdine(), o.getId()));
             System.out.println("messaggio inserito nel topic " + PubSubConf.CHECK_PRODUCTS_TOPIC);
-
         }
-        
+        orderRepository.saveAndFlush(o);
     }
 
     @Bean
@@ -86,11 +80,10 @@ public class MessageHandler {
             //impostare lo stato dell'ordine su annullato
             o.setState("ANNULLATO");
             o.setMessageState(message.getMessage());
-            orderRepository.saveAndFlush(o);
         }else{
             o.setState("CONFERMATO");
             o.setMessageState("ordine confermato");
-            orderRepository.saveAndFlush(o);
         }
+        orderRepository.saveAndFlush(o);
     }
 }

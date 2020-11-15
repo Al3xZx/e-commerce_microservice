@@ -88,7 +88,9 @@ public class MessageHandler {
     public void refundCustomer(MessageCustomerRollback message) {
         System.out.println("ricevuto messaggio di rimborso del cliente " + message.getCustomerId());
         Customer c = customerRepository.findById(message.getCustomerId()).get();
-        c.setCredit(c.getCredit()+message.getCreditIncrement());
+        double creditInc = c.getCredit()+message.getCreditIncrement();
+        creditInc = Math.floor(creditInc*100)/100;
+        c.setCredit(creditInc);
         customerRepository.saveAndFlush(c);
     }//refundCustomer
 

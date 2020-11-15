@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MessageHandler {
@@ -22,6 +22,7 @@ public class MessageHandler {
 
     @Autowired
     PubSubTemplate pubSubTemplate;
+
 
     @Bean
     public void readMessage(){
@@ -51,6 +52,7 @@ public class MessageHandler {
 
     @Transactional(readOnly = false, rollbackFor = ProductException.class)
     public void checkProductsAndUpdateQty(ProductsOL message) throws ProductException {
+        List<Product> products = new LinkedList<>();
         for(OrderLine ol: message.getOrderLineList()) {
             System.out.println("--order --> "+ol.getId() + " --order id --> " + message.getOrderId());
             Optional<Product> op = productRepository.findById(ol.getIdProdotto());
@@ -66,8 +68,11 @@ public class MessageHandler {
             }
             ol.setNomeProdotto(p.getName());
             p.setQta(p.getQta()-ol.getQta());
-            productRepository.saveAndFlush(p);
+            products.add(p);
         }//for
+        for (Product p : products){
+            productRepository.saveAndFlush(p);
+        }
         pubSubTemplate.publish(
                 PubSubConf.RESULT_CHECK_PRODUCTS_TOPIC,
                 new ProductsOL(message.getOrderLineList(), message.getOrderId(),  "verifica effettuata con successo")
