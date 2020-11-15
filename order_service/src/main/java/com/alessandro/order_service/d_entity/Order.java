@@ -1,15 +1,17 @@
 package com.alessandro.order_service.d_entity;
 
-import javax.persistence.*;
+import org.springframework.cloud.gcp.data.datastore.core.mapping.Descendants;
+import org.springframework.cloud.gcp.data.datastore.core.mapping.Entity;
+import org.springframework.data.annotation.Id;
+
 import java.util.LinkedList;
 import java.util.List;
 
-@Entity
-@Table(name = "order_table")
+@Entity(name = "order_table")
 public class Order {
 
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     private Integer id;
 
     private Integer idCliente;
@@ -25,7 +27,8 @@ public class Order {
 
     private String messageState;
 
-    @OneToMany(mappedBy = "ordine", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    @OneToMany(mappedBy = "ordine", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Descendants
     private List<OrderLine> lineaOrdine = new LinkedList<>();
 
     public Integer getId() {

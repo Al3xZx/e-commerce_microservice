@@ -53,7 +53,7 @@ public class MessageHandler {
             pubSubTemplate.publish(PubSubConf.CHECK_PRODUCTS_TOPIC, new ProductsOL(o.getLineaOrdine(), o.getId()));
             System.out.println("messaggio inserito nel topic " + PubSubConf.CHECK_PRODUCTS_TOPIC);
         }
-        orderRepository.saveAndFlush(o);
+//        orderRepository.saveAndFlush(o);
     }
 
     @Bean
@@ -84,6 +84,6 @@ public class MessageHandler {
             o.setState("CONFERMATO");
             o.setMessageState("ordine confermato");
         }
-        orderRepository.saveAndFlush(o);
+//        orderRepository.saveAndFlush(o);
     }
 }

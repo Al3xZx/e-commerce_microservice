@@ -1,14 +1,16 @@
 package com.alessandro.order_service.d_entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.cloud.gcp.data.datastore.core.mapping.Entity;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 
-import javax.persistence.*;
 
-@Entity
+@Entity(name = "order_line")
 public class OrderLine {
 
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     private Integer id;
 
     private Integer idProdotto;
@@ -21,9 +23,10 @@ public class OrderLine {
 
     private Double totale; //prezzoPordotto * qta
 
-    @ManyToOne
-    @JoinColumn
+//    @ManyToOne
+//    @JoinColumn
     @JsonIgnore
+    @Reference
     private Order ordine;
 
     public Integer getId() {
