@@ -6,8 +6,12 @@ import com.alessandro.product.messaging.dto.OrderLine;
 import com.alessandro.product.messaging.dto.ProductsOL;
 import com.alessandro.product.messaging.pubsub.conf.PubSubConf;
 import com.alessandro.product.support.exception.ProductException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-public class MessageHandler {
+public class MessageHandler implements ApplicationListener<ApplicationReadyEvent> {
+
+    private Log log = LogFactory.getLog(MessageHandler.class);
 
     @Autowired
     ProductRepository productRepository;
@@ -24,7 +30,13 @@ public class MessageHandler {
     PubSubTemplate pubSubTemplate;
 
 
-    @Bean
+
+    @Override
+    public void onApplicationEvent(final ApplicationReadyEvent event) {
+        //codice di inizializzaione
+        readMessage();
+    }
+
     public void readMessage(){
         pubSubTemplate.subscribeAndConvert(
                 PubSubConf.CHECK_PRODUCTS_SUBSCRIPTION,
@@ -39,7 +51,8 @@ public class MessageHandler {
     }
 
     public void checkProducts(ProductsOL message){
-        System.out.println("Message received from topic "+PubSubConf.CHECK_PRODUCTS_SUBSCRIPTION);
+        log.info("Message received from topic "+PubSubConf.CHECK_PRODUCTS_SUBSCRIPTION);
+//        System.out.println("Message received from topic "+PubSubConf.CHECK_PRODUCTS_SUBSCRIPTION);
         try {
             checkProductsAndUpdateQty(message);
         } catch (ProductException e) {
@@ -54,7 +67,8 @@ public class MessageHandler {
     public void checkProductsAndUpdateQty(ProductsOL message) throws ProductException {
         List<Product> products = new LinkedList<>();
         for(OrderLine ol: message.getOrderLineList()) {
-            System.out.println("--order --> "+ol.getId() + " --order id --> " + message.getOrderId());
+            log.info("verifico prodotto "+ol.getIdProdotto()+" order id "+message.getOrderId());
+//            System.out.println("--order --> "+ol.getId() + " --order id --> " + message.getOrderId());
             Optional<Product> op = productRepository.findById(ol.getIdProdotto());
             if(!op.isPresent()){
                 throw new ProductException(String.format("prodotto %d non presente", ol.getIdProdotto()));

@@ -6,8 +6,12 @@ import com.alessandro.customer.messaging.dto.MessageCustomerCheck;
 import com.alessandro.customer.messaging.dto.MessageCustomerRollback;
 import com.alessandro.customer.messaging.dto.ResultCustomerCheck;
 import com.alessandro.customer.messaging.pubsub.conf.PubSubConf;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +20,9 @@ import java.util.Optional;
 
 
 @Service
-public class MessageHandler {
+public class MessageHandler implements ApplicationListener<ApplicationReadyEvent> {
+
+    private Log log = LogFactory.getLog(MessageHandler.class);
 
     @Autowired
     CustomerRepository customerRepository;
@@ -24,8 +30,13 @@ public class MessageHandler {
     @Autowired
     PubSubTemplate pubSubTemplate;
 
+    @Override
+    public void onApplicationEvent(final ApplicationReadyEvent event) {
+        checkCustomerListener();
+        refundCustomerMessage();
+    }
 
-    @Bean
+
     public void checkCustomerListener(){
         pubSubTemplate.subscribeAndConvert(
                 PubSubConf.CHECK_CUSTOMER_SUBSCRIPTION,
@@ -42,7 +53,8 @@ public class MessageHandler {
     @Transactional(readOnly = false)
     public void checkCustomer(MessageCustomerCheck message) {
         Optional<Customer> oc = customerRepository.findById(message.getCustomerId());
-        System.out.println("ricevuto messaggio di verifica del cliente " + message.getCustomerId());
+        log.info("ricevuto messaggio di verifica del cliente " + message.getCustomerId());
+//        System.out.println("ricevuto messaggio di verifica del cliente " + message.getCustomerId());
         if(oc.isPresent()) {
             Customer c = oc.get();
             double credit = c.getCredit();
@@ -56,11 +68,11 @@ public class MessageHandler {
                 double creditDec = credit - message.getCreditDecremet();
                 creditDec =  Math.floor(creditDec*100)/100;
                 c.setCredit(creditDec);
+                customerRepository.saveAndFlush(c);
                 pubSubTemplate.publish(
                         PubSubConf.RESULT_CHECK_CUSTOMER_TOPIC,
                         new ResultCustomerCheck(c, message.getOrderId(), "credito sufficiente")
                 );
-                customerRepository.saveAndFlush(c);
             }
         }else {
             pubSubTemplate.publish(
@@ -70,8 +82,8 @@ public class MessageHandler {
         }
     }//checkCustomer
 
-    @Bean
-    public void refoundCustomerMessage(){
+
+    public void refundCustomerMessage(){
         pubSubTemplate.subscribeAndConvert(
                 PubSubConf.CREDIT_ROLLBACK_SUBSCRIPTION,
                 (message) ->{
@@ -86,7 +98,8 @@ public class MessageHandler {
 
     @Transactional(readOnly = false)
     public void refundCustomer(MessageCustomerRollback message) {
-        System.out.println("ricevuto messaggio di rimborso del cliente " + message.getCustomerId());
+        log.info("ricevuto messaggio di rimborso del cliente " + message.getCustomerId());
+//        System.out.println("ricevuto messaggio di rimborso del cliente " + message.getCustomerId());
         Customer c = customerRepository.findById(message.getCustomerId()).get();
         double creditInc = c.getCredit()+message.getCreditIncrement();
         creditInc = Math.floor(creditInc*100)/100;
