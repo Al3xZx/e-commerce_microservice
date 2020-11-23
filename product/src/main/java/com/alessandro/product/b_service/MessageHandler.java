@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.gcp.pubsub.core.PubSubTemplate;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,6 @@ public class MessageHandler implements ApplicationListener<ApplicationReadyEvent
 
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
-        //codice di inizializzaione
         readMessage();
     }
 
@@ -42,9 +40,8 @@ public class MessageHandler implements ApplicationListener<ApplicationReadyEvent
                 PubSubConf.CHECK_PRODUCTS_SUBSCRIPTION,
                 (message) ->{
                     ProductsOL p = message.getPayload();
-                    message.ack();
                     checkProducts(p);
-
+                    message.ack();
                 },
                 ProductsOL.class
         );

@@ -45,8 +45,8 @@ public class MessageHandler implements ApplicationListener<ApplicationReadyEvent
                 PubSubConf.RESULT_CHECK_CUSTOMER_SUBSCRIPTION,
                 (message) ->{
                     ResultCustomerCheck r = message.getPayload();
-                    message.ack();
                     checkCustomerAndSendCheckProducts(r);
+                    message.ack();
                 },
                 ResultCustomerCheck.class
         );
@@ -79,8 +79,8 @@ public class MessageHandler implements ApplicationListener<ApplicationReadyEvent
                 PubSubConf.RESULT_CHECK_PRODUCTS_SUBSCRIPTION,
                 (message) ->{
                     ProductsOL m = message.getPayload();
-                    message.ack();
                     resultCheckProducts(m);
+                    message.ack();
                 },
                 ProductsOL.class
         );

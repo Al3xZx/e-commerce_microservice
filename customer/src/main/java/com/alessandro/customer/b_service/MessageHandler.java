@@ -42,9 +42,8 @@ public class MessageHandler implements ApplicationListener<ApplicationReadyEvent
                 PubSubConf.CHECK_CUSTOMER_SUBSCRIPTION,
                 (message) ->{
                     MessageCustomerCheck m = message.getPayload();
-                    message.ack();
                     checkCustomer(m);
-
+                    message.ack();
                 },
                 MessageCustomerCheck.class
         );
@@ -88,8 +87,8 @@ public class MessageHandler implements ApplicationListener<ApplicationReadyEvent
                 PubSubConf.CREDIT_ROLLBACK_SUBSCRIPTION,
                 (message) ->{
                     MessageCustomerRollback m = message.getPayload();
-                    message.ack();
                     refundCustomer(m);
+                    message.ack();
 
                 },
                 MessageCustomerRollback.class
