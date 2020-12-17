@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.alessandro</groupId>
     <artifactId>product</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>v7</version>
     <name>product</name>
     <description>microservizio relativo ai prodotti</description>
 
