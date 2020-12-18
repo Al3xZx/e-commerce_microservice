@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+    name: api-gateway
+spec:
+    rules:
+        - http:
+            paths:
+                - path: "/customer_service"
+                  backend:
+                    serviceName: customer-service
+                    servicePort: 8090
+                - path: "/product_service"
+                  backend:
+                    serviceName: product-service
+                    servicePort: 8091
+                - path: "/order_service"
+                  backend:
+                    serviceName: order-service
+                    servicePort: 8092
