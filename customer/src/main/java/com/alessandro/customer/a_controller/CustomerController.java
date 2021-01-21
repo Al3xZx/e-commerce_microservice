@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/customer_service")
+@RequestMapping(value = "/")
 public class CustomerController{
 
     @Autowired

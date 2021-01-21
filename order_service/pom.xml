@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.alessandro</groupId>
     <artifactId>order_service</artifactId>
-    <version>v2</version>
+    <version>v3</version>
     <name>order_service</name>
     <description>servivizio che gestisce gli ordini</description>
 

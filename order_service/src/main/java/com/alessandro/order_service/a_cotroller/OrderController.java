@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping(value = "/order_service")
+@RequestMapping(value = "/")
 public class OrderController {
 
     @Autowired
