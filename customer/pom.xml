@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.alessandro</groupId>
     <artifactId>customer</artifactId>
-    <version>v2</version>
+    <version>v3</version>
     <name>customer</name>
     <description>Microservizio dei clienti</description>
 
@@ -60,6 +60,13 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId>
+            <version>1.2.6.RELEASE</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-gcp-starter-trace -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-gcp-starter-trace</artifactId>
             <version>1.2.6.RELEASE</version>
         </dependency>
 
